@@ -12,7 +12,7 @@
 
 
 
-
+CREATE SCHEMA IF NOT EXISTS pgagent;
 COMMENT ON SCHEMA pgagent IS 'pgAgent system tables';
 
 
@@ -144,6 +144,16 @@ CREATE INDEX pga_jobsteplog_jslid ON pgagent.pga_jobsteplog(jsljlgid);
 COMMENT ON TABLE pgagent.pga_jobsteplog IS 'Job step run logs.';
 COMMENT ON COLUMN pgagent.pga_jobsteplog.jslstatus IS 'Status of job step: r=running, s=successfully finished,  f=failed stopping job, i=ignored failure, d=aborted';
 COMMENT ON COLUMN pgagent.pga_jobsteplog.jslresult IS 'Return code of job step';
+
+-- Table to track job dependencies
+CREATE TABLE pgagent.pga_job_dependency (
+    jobid INTEGER NOT NULL,           -- The job that has a dependency
+    dependent_jobid INTEGER NOT NULL, -- The job that must complete first
+    PRIMARY KEY (jobid, dependent_jobid),  -- Composite primary key
+    CONSTRAINT fk_job FOREIGN KEY (jobid) REFERENCES pgagent.pga_job(jobid) ON DELETE CASCADE,
+    CONSTRAINT fk_dependent_job FOREIGN KEY (dependent_jobid) REFERENCES pgagent.pga_job(jobid) ON DELETE CASCADE
+);
+
 
 CREATE OR REPLACE FUNCTION pgagent.pgagent_schema_version() RETURNS int2 AS '
 BEGIN
