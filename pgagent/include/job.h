@@ -26,6 +26,7 @@ public:
 	{
 		return m_status == "r";
 	}
+	bool CheckDependencies();
 
 protected:
 	DBconn      *m_threadConn;

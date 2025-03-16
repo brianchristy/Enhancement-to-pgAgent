@@ -72,6 +72,51 @@ Job::~Job()
 	LogMessage("Completed job: " + m_jobid, LOG_DEBUG);
 }
 
+bool Job::CheckDependencies()
+{
+	LogMessage("Checking dependencies for job: " + m_jobid, LOG_DEBUG);
+
+	// Fetch all job dependencies
+	DBresultPtr res = m_threadConn->Execute(
+		"SELECT dependent_jobid FROM pgagent.pga_job_dependency WHERE jobid = " + m_jobid);
+
+	if (!res || res->RowsAffected() == 0)
+	{
+		LogMessage("No dependencies found for job: " + m_jobid, LOG_DEBUG);
+		return true; // No dependencies, so the job can run
+	}
+
+	while (res->HasData())
+	{
+		std::string depJobId = res->GetString("dependent_jobid");
+
+		// Check if the dependent job completed successfully
+		DBresultPtr depRes = m_threadConn->Execute(
+			"SELECT jlgstatus FROM pgagent.pga_joblog "
+			"WHERE jlgjobid = " +
+			depJobId +
+			" ORDER BY jlgstart DESC LIMIT 1");
+
+		if (!depRes || depRes->RowsAffected() == 0)
+		{
+			LogMessage("Dependency job " + depJobId + " has no execution logs. Cannot proceed.", LOG_WARNING);
+			return false;
+		}
+
+		std::string depStatus = depRes->GetString("jlgstatus");
+
+		if (depStatus != "s") // 's' means success
+		{
+			LogMessage("Dependency job " + depJobId + " did not complete successfully. Status: " + depStatus, LOG_WARNING);
+			return false;
+		}
+
+		res->MoveNext();
+	}
+
+	LogMessage("All dependencies satisfied for job: " + m_jobid, LOG_DEBUG);
+	return true;
+}
 
 int Job::Execute()
 {
@@ -434,10 +479,22 @@ void JobThread::operator()()
 	{
 		Job job(threadConn, m_jobid);
 
+		// if (job.Runnable())
+		// {
+		// 	job.Execute();
+		// }
 		if (job.Runnable())
 		{
-			job.Execute();
+			if (job.CheckDependencies())
+			{
+				job.Execute();
+			}
+			else
+			{
+				LogMessage("Job " + m_jobid + " cannot run due to unmet dependencies.", LOG_WARNING);
+			}
 		}
+
 		else
 		{
 			LogMessage("Failed to launch the thread for job " + m_jobid +
