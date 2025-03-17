@@ -27,7 +27,7 @@ Previously, **pgAgent** executed jobs **independently** based on schedules. With
 A new table **`pgagent.pga_job_dependency`** has been added to track dependencies.  
 
 ### 📌 Table Definition  
-$$$
+```
 CREATE TABLE pgagent.pga_job_dependency (
     jdepid SERIAL PRIMARY KEY,    -- Unique ID for the dependency
     jdparent INTEGER NOT NULL,    -- Parent job (must complete first)
@@ -35,7 +35,7 @@ CREATE TABLE pgagent.pga_job_dependency (
     CONSTRAINT fk_parent FOREIGN KEY (jdparent) REFERENCES pgagent.pga_job(jobid) ON DELETE CASCADE,
     CONSTRAINT fk_child FOREIGN KEY (jdchild) REFERENCES pgagent.pga_job(jobid) ON DELETE CASCADE
 );
-$$$
+```
 - **`jdparent`** → The job that must finish first.  
 - **`jdchild`** → The job that runs only if `jdparent` succeeds.  
 - **Cascading delete** ensures dependencies are removed when a job is deleted.  
@@ -57,13 +57,13 @@ We will create three jobs:
 Each job should insert an entry into a **test table** upon execution.  
 
 #### **Create Test Table for Tracking Execution**  
-$$$
+```
 CREATE TABLE job_execution_log (
     logid SERIAL PRIMARY KEY,
     jobname TEXT NOT NULL,
     execution_time TIMESTAMP DEFAULT now()
 );
-$$$
+```
 
 
 ---
@@ -74,11 +74,11 @@ We now define dependencies:
 - **Job B depends on Job A** (`Job A` must execute before `Job B`).  
 - **Job C depends on Job B** (`Job B` must execute before `Job C`, which should fail).  
 
-$$$
+```
 INSERT INTO pgagent.pga_job_dependency (jdparent, jdchild) VALUES 
 (5, 6), -- Job B runs only after Job A
 (6, 7); -- Job C runs only after Job B (which depends on A)
-$$$
+```
 *(Replace `5`, `6`, and `7` with actual `jobid` values.)*  
 
 ---
@@ -97,27 +97,27 @@ We now schedule jobs such that:
 ## 🔍 Verifying Execution  
 
 ### ✅ Check if Jobs are Scheduled  
-$$$
+```
 SELECT jobid, jobname, jobnextrun FROM pgagent.pga_job WHERE jobid IN (5, 6, 7);
-$$$
+```
 *(Replace `5`, `6`, and `7` with actual `jobid` values.)*  
 
 - `jobnextrun` should be set based on dependencies.  
 - **Job C** should have the earliest execution time.  
 
 ### ✅ Verify Dependency Execution  
-$$$
+```
 SELECT * FROM job_execution_log ORDER BY execution_time;
-$$$
+```
 - **Expected Outcome:**  
   - **Job A** executes first.  
   - **Job B** executes after **Job A** completes.  
   - **Job C** does **not** execute if **Job B** fails.  
 
 ### ✅ Verify Dependency Table  
-$$$
+```
 SELECT * FROM pgagent.pga_job_dependency;
-$$$
+```
 - This should list all defined dependencies.  
 
 ---
