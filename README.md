@@ -52,7 +52,7 @@ Ensure you have the following installed:
 
 4. **Compile pgAgent:**
    ```
-   cmake --build . --config Release
+   cmake --build . --config Debug
    ```
 
 5. **Ensure `pgagent.exe` is successfully created.**
