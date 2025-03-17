@@ -62,7 +62,7 @@ SELECT * FROM test_execution_log ORDER BY executed_at;
 ```
 
 ✅ **Expected Output:**  
-- `executed_at` should have value only **after actual execution** so `Job C` should insert a value in table after both `Job A` and `Job B` has succesfully ran.
+- `executed_at` should have value only **after actual execution**. So `Job C` should insert a value in table after both `Job A` and `Job B` has succesfully ran.
 
 📸 **Screenshot:**  
 ![Final Job States](outputs/test_exec_log.png)
