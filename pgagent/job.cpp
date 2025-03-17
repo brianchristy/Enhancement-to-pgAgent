@@ -479,10 +479,6 @@ void JobThread::operator()()
 	{
 		Job job(threadConn, m_jobid);
 
-		// if (job.Runnable())
-		// {
-		// 	job.Execute();
-		// }
 		if (job.Runnable())
 		{
 			if (job.CheckDependencies())
