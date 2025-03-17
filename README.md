@@ -89,7 +89,7 @@ SELECT * FROM pg_stat_activity WHERE application_name = 'pgAgent';
 ⬜ **Parallel Job Execution** (Future Work)  
 
 For detailed information on enhancements, refer to:
-- [**Job Dependency Enhancement**](README_Job_Dependency.md)  
+- [**Job Dependency Enhancement**](https://github.com/brianchristy/Enhancement-to-pgAgent/tree/main/Enhancements/Job_Dependency)  
 - **(Upcoming) RBAC Enhancement README**  
 
 ---
