@@ -97,7 +97,7 @@ SELECT * FROM pgagent.pga_joblog ORDER BY jlgstart DESC;
 📸 **Screenshot:**  
 ![Final Job States](outputs/failed_test.png)
 
-- `r` represents **not completed due to dependency** but has made modification mentioned in the section [Go to Refined Job status entry](#job-execution-log).
+- `r` represents **not completed due to dependency** but has made modification mentioned in the section [Go to Refined Job status entry](#3️⃣-job-execution-log).
 - `f` represents **failed due to some internal issue**.
 ---
 
