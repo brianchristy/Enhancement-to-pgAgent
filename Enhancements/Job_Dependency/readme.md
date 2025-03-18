@@ -14,12 +14,11 @@ Previously, **pgAgent** executed jobs **independently** based on schedules. With
 
 | File | Description | Changes |
 |------|------------|---------|
-| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp) | Core Job Execution Logic | Added dependency checks |
+| [`pgagent.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/sql/pgagent.sql#L123) | Schema Changes | Modified `pgagent.pga_joblog` table |
 | [`pgagent.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/sql/pgagent.sql#L148-L155) | Schema Changes | Added `pga_job_dependency` table |
-| [`job.h`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/include/job.h#L29) | Job Struct Updates | Defined dependency handling functions |
-| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L482-L492) | Scheduler Logic | Modified job execution order |
-| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L75-L119) | Dependency Function | Added function for checling dependency |
-
+| [`job.h`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/include/job.h#L29-30) | Job Struct Updates | Defined dependency handling functions |
+| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L487-L499) | Scheduler Logic | Modified job execution order |
+| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L75-L124) | Dependency Function | Added function for checling dependency and setting Job Status|
 ---
 
 ## ⚙️ Schema Modification  
