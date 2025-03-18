@@ -40,6 +40,20 @@ CREATE TABLE pgagent.pga_job_dependency (
 - **`jdchild`** → The job that runs only if `jdparent` succeeds.  
 - **Cascading delete** ensures dependencies are removed when a job is deleted.  
 
+An existing table **`pgagent.pga_job_log`** has been modifed to hold the status after failure due to dependency check.  
+
+### 📌 New Table Definition  
+```
+CREATE TABLE pgagent.pga_joblog (
+jlgid                serial               NOT NULL PRIMARY KEY,
+jlgjobid             int4                 NOT NULL REFERENCES pgagent.pga_job (jobid) ON DELETE CASCADE ON UPDATE RESTRICT,
+jlgstatus            char                 NOT NULL CHECK (jlgstatus IN ('r', 's', 'f', 'i', 'd', 'x')) DEFAULT 'r', -- running, success, failed, internal failure, aborted, dependency not met
+jlgstart             timestamptz          NOT NULL DEFAULT current_timestamp,
+jlgduration          interval             NULL
+) WITHOUT OIDS;
+```
+- **`x`** → The job has failed because the dependency is not met.  
+
 ---
 
 ## 🛠️ Testing Job Dependency  

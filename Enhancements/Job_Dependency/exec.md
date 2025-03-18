@@ -49,9 +49,17 @@ SELECT * FROM pgagent.pga_joblog;
 
 📸 **Screenshot:**  
 ![Job Execution Log](outputs/job_execution_log.png)
-- `r` represents **not completed due to dependency**.
+- `r` represents **not completed due to dependency constratint**.
 - `s` represents **successfully completed execution**.
 
+**Refined Job Status Entry**
+![Job Execution Log New](outputs/job_execution_log_refined.png)
+- `x` represents **not completed due to dependency constraint**.
+- `s` represents **successfully completed execution**.
+
+- `Job_X (jobid:17)` is **independent**.
+- `Job_Y (jobid:18)` **depends** on `Job_X (jobid:17)`.
+- `Job_Z (jobid:19)` **depends** on `Job_Y (jobid:18)`.
 ---
 
 ## **4️⃣ Verifying Final States of the Test Table we created to see the entry of each job in the table**
@@ -84,12 +92,12 @@ SELECT * FROM pgagent.pga_joblog ORDER BY jlgstart DESC;
 ```
 
 ✅ **Expected Output:**  
-- `Job A` should have **fail** resulting in `Job B` and `Job C` to also **fail due to dependency**.
+- `Job X` should have **failed** resulting in `Job Y` and `Job Z` to also **fail due to dependency**.
 
 📸 **Screenshot:**  
 ![Final Job States](outputs/failed_test.png)
 
-- `r` represents **not completed due to dependency**.
+- `r` represents **not completed due to dependency** but has made modification mentioned in the section [Go to Refined Job status entry](#job-execution-log).
 - `f` represents **failed due to some internal issue**.
 ---
 

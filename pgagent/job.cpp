@@ -72,6 +72,11 @@ Job::~Job()
 	LogMessage("Completed job: " + m_jobid, LOG_DEBUG);
 }
 
+void Job::SetStatus(const std::string &status)
+{
+	m_status = status;
+}
+
 bool Job::CheckDependencies()
 {
 	LogMessage("Checking dependencies for job: " + m_jobid, LOG_DEBUG);
@@ -487,7 +492,9 @@ void JobThread::operator()()
 			}
 			else
 			{
+				// Set the job status to 'x' to indicate dependency failure
 				LogMessage("Job " + m_jobid + " cannot run due to unmet dependencies.", LOG_WARNING);
+				job.SetStatus("x");
 			}
 		}
 

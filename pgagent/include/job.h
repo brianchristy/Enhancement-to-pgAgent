@@ -27,6 +27,7 @@ public:
 		return m_status == "r";
 	}
 	bool CheckDependencies();
+	void SetStatus(const std::string &status);
 
 protected:
 	DBconn      *m_threadConn;
