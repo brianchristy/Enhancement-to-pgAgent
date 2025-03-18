@@ -126,7 +126,7 @@ jlgduration          interval             NULL
 ) WITHOUT OIDS;
 CREATE INDEX pga_joblog_jobid ON pgagent.pga_joblog(jlgjobid);
 COMMENT ON TABLE pgagent.pga_joblog IS 'Job run logs.';
-COMMENT ON COLUMN pgagent.pga_joblog.jlgstatus IS 'Status of job: r=running, s=successfully finished, f=failed, i=no steps to execute, d=aborted';
+COMMENT ON COLUMN pgagent.pga_joblog.jlgstatus IS 'Status of job: r=running, s=successfully finished, f=failed, i=no steps to execute, d=aborted, r=dependency not met';
 
 
 
