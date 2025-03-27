@@ -10,6 +10,7 @@
 import gettext from 'sources/gettext';
 import BaseUISchema from 'sources/SchemaView/base_schema.ui';
 import PgaJobScheduleSchema from '../../schedules/static/js/pga_schedule.ui';
+import PgaJobDependencySchema from './pga_job_dependency.ui';
 
 export default class PgaJobSchema extends BaseUISchema {
   constructor(fieldOptions={}, getPgaJobStepSchema=()=>[], initValues={}) {
@@ -28,11 +29,13 @@ export default class PgaJobSchema extends BaseUISchema {
       jobdesc: '',
       jsteps: [],
       jschedules: [],
+      jdependencies: [],
       ...initValues,
     });
 
     this.fieldOptions = {
       jobjclid: [],
+      jobs: [],
       ...fieldOptions,
     };
     this.getPgaJobStepSchema = getPgaJobStepSchema;
@@ -117,6 +120,14 @@ export default class PgaJobSchema extends BaseUISchema {
         schema: new PgaJobScheduleSchema(),
         canAdd: true, canDelete: true, canEdit: true,
         columns: ['jscname', 'jscenabled', 'jscstart', 'jscend'],
+      },{
+        id: 'jdependencies', label: '', group: gettext('Dependencies'),
+        type: 'collection', mode: ['edit', 'create'],
+        schema: new PgaJobDependencySchema({
+          jobs: this.fieldOptions.jobs,
+        }),
+        canAdd: true, canDelete: true, canEdit: true,
+        columns: ['dependent_jobname'],
       }
     ];
   }
