@@ -76,6 +76,24 @@ An entry should be added to the audit log table with event_type = EXECUTE.
 📸 **Video Proof of Audit Logging**:
 
 
+
+https://github.com/user-attachments/assets/c86c3dd3-56a7-4a7e-945d-d04eca59757f
+
+
+
+https://github.com/user-attachments/assets/d5e8f434-22e8-4784-838e-f723cad50ae1
+
+
+
+https://github.com/user-attachments/assets/ba72fd7f-6724-4e0b-b95c-4c8fb2a7fed8
+
+
+
+
+https://github.com/user-attachments/assets/ba108b87-6978-4508-ae64-657f8e054c56
+
+
+
 ## **🎯 Conclusion:
 The Audit Logging feature is working as expected, accurately logging job actions such as creation, modification, deletion, and execution.
 Note: If the figures are not clear, please see the images in the outputs folder inside Audit Logging.
