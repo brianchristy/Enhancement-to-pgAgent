@@ -111,6 +111,20 @@ define('pgadmin.node.pga_job', [
 
         return false;
       },
+
+      /* Refresh the jobs list after creating a new job */
+      onSave: function(isNew, data) {
+        let obj = this;
+        return obj.nodeAjax('create', data, {}, function(res) {
+          if (res.success) {
+            // Refresh the jobs list by invalidating the cache
+            let cacheNode = pgAdmin.Browser.Nodes['server'];
+            if (cacheNode) {
+              cacheNode.cache(obj.type + '#jobs', {}, 'server', null);
+            }
+          }
+        });
+      }
     });
   }
 
