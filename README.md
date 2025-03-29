@@ -1,7 +1,7 @@
 # 🚀 pgAgent Enhancement Project
 
 ## 📌 Overview
-This project is a customized enhancement of **pgAgent**, focused on improving **Job Dependencies** and **Role-Based Access Control (RBAC)**. The modifications are built on top of **pgAdmin's official pgAgent**.
+This project is a customized enhancement of **pgAgent**, focused on improving **Job Dependencies** and **Audit Logging**. The modifications are built on top of **pgAdmin's official pgAgent**.
 
 For general setup instructions, **refer to the official [pgAdmin4 README](https://github.com/pgadmin-org/pgadmin4/blob/master/README.md)**.
 For window specific instruction, **refer to the official [pgAdmin4 README](https://github.com/pgadmin-org/pgadmin4/blob/master/pkg/win32/README.md)**.
@@ -85,12 +85,11 @@ SELECT * FROM pg_stat_activity WHERE application_name = 'pgAgent';
 
 ## 📜 Enhancements Implemented
 ✅ **Job Dependencies** (Completed)  
-✅ **RBAC (Role-Based Access Control)** (Next)  
-⬜ **Parallel Job Execution** (Future Work)  
+✅ **Audit Logging** (Completed)  
 
 For detailed information on enhancements, refer to:
 - [**Job Dependency Enhancement**](https://github.com/brianchristy/Enhancement-to-pgAgent/tree/main/Enhancements/Job_Dependency)  
-- **(Upcoming) RBAC Enhancement README**  
+- [**Audit Logging**](https://github.com/brianchristy/Enhancement-to-pgAgent/tree/main/Enhancements/Audit_Logging)
 
 ---
 

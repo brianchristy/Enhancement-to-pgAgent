@@ -208,5 +208,6 @@ This **Audit Logging** feature ensures transparency and security by maintaining 
 
 - **Enhance UI** to display audit logs in pgAdmin.
   
+---
 
-📖 **Refer to the Main README for general setup and instructions.**
+📖 **Refer to the [Main README](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/README.md) for general setup and instructions.**  
