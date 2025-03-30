@@ -106,12 +106,16 @@ SELECT * FROM pgagent.pga_joblog ORDER BY jlgstart DESC;
 
 We can now see a new tab `Dependency` while creating a job. Ensured that the `Dependent Job` cannot be empty if a dependency is added and there is no `Self Dependency`.
 
-📸 **Screenshot:**  
+📸 **Screenshot:** 
+- Old pgAdmin Job creation interface 
 ![pgAdmin before](outputs/UI_before.png)
 
+- New pgAdmin Job creation interface with proper constraint check
 ![pgAdmin after](outputs/UI_after_1.png)
 
+- New pgAdmin Job creation interface ensuring no self dependency
 ![pgAdmin after](outputs/UI_after_2.png)
+
 ---
 
 🎯 **Conclusion:**  
