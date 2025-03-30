@@ -99,8 +99,20 @@ SELECT * FROM pgagent.pga_joblog ORDER BY jlgstart DESC;
 
 - `r` represents **not completed due to dependency** but has made modification mentioned in the section [Go to Refined Job status entry](#3️⃣-job-execution-log).
 - `f` represents **failed due to some internal issue**.
+
 ---
 
+## **6️⃣ UI Changes**
+
+We can now see a new tab `Dependency` while creating a job. Ensured that the `Dependent Job` cannot be empty if a dependency is added and there is no `Self Dependency`.
+
+📸 **Screenshot:**  
+![pgAdmin before](outputs/UI_before.png)
+
+![pgAdmin after](outputs/UI_after_1.png)
+
+![pgAdmin after](outputs/UI_after_2.png)
+---
 
 🎯 **Conclusion:**  
 The Job Dependency feature is **working as expected** with **correct execution order**.
