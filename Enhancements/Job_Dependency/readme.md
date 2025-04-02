@@ -18,7 +18,44 @@ Previously, **pgAgent** executed jobs **independently** based on schedules. With
 | [`pgagent.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/sql/pgagent.sql#L148-L155) | Schema Changes | Added `pga_job_dependency` table |
 | [`job.h`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/include/job.h#L29-L30) | Job Struct Updates | Defined dependency handling functions |
 | [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L487-L499) | Scheduler Logic | Modified job execution order |
-| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L75-L124) | Dependency Function | Added function for checling dependency and setting Job Status|
+| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L75-L124) | Dependency Function | Added function for checking dependency and setting Job Status |
+| [`pga_job.ui.js`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/static/js/pga_job.ui.js) | UI Schema | Added dependency collection field |
+| [`pga_job_dependency.ui.js`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/static/js/pga_job_dependency.ui.js) | UI Schema | Added dependency form fields |
+| [`update_dependencies.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/templates/pga_job/sql/pre3.4/update_dependencies.sql) | SQL Template | Added dependency update logic |
+| [`jobs.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/templates/pga_job/sql/pre3.4/jobs.sql) | SQL Template | Modified to filter out existing dependencies |
+
+---
+
+## 🖥️ UI Modifications
+
+### 📌 Dependency Management Interface
+- Added a new **Dependencies** tab in job properties
+- Implemented dependency collection with add/edit/delete capabilities
+- Added validation to prevent duplicate dependencies
+
+### 📌 Features
+1. **Dependency Tab**
+   - Accessible in job properties view
+   - Shows list of current dependencies
+   - Allows adding new dependencies
+   - Allows removing existing dependencies
+
+2. **Dependency Selection**
+   - Dropdown list of available jobs
+   - Filters out already selected dependencies
+   - Prevents self-dependency
+   - Shows job names for better identification
+
+3. **Dependency Management**
+   - Real-time updates when adding/removing dependencies
+   - Validation to prevent invalid dependencies
+   - Proper error handling and user feedback
+
+4. **User Experience**
+   - Intuitive interface similar to Schedules and Steps tabs
+   - Clear visual feedback for dependency status
+   - Easy to understand dependency relationships
+
 ---
 
 ## ⚙️ Schema Modification  
@@ -99,7 +136,7 @@ INSERT INTO pgagent.pga_job_dependency (jdparent, jdchild) VALUES
 ### **4️⃣ Scheduling Jobs**  
 
 We now schedule jobs such that:  
-- **Job C is scheduled fisrt** (`Job C` should not complete its execution before `Job B`).  
+- **Job C is scheduled first** (`Job C` should not complete its execution before `Job B`).  
 - **Job A is scheduled next** (`Job A` must execute since it is independent).  
 - **Job B is scheduled last** (`Job B` must execute since it is dependent on `Job A` and `Job A` has successfully completed its execution).  
 
@@ -156,3 +193,5 @@ This **Job Dependency** feature allows controlled execution of jobs, ensuring th
 ---
 
 📖 **Refer to the [Main README](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/README.md) for general setup and instructions.**  
+
+📖 **Refer to the [Proof of execution](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/Enhancements/Job_Dependency/proof_of_execution.md) for output verification.**  

@@ -49,7 +49,7 @@ SELECT * FROM pgagent.pga_joblog;
 
 📸 **Screenshot:**  
 ![Job Execution Log](outputs/job_execution_log.png)
-- `r` represents **not completed due to dependency constratint**.
+- `r` represents **not completed due to dependency constraint**.
 - `s` represents **successfully completed execution**.
 
 **Refined Job Status Entry**
@@ -70,7 +70,7 @@ SELECT * FROM test_execution_log ORDER BY executed_at;
 ```
 
 ✅ **Expected Output:**  
-- `executed_at` should have value only **after actual execution**. So `Job C` should insert a value in table after both `Job A` and `Job B` has succesfully ran.
+- `executed_at` should have value only **after actual execution**. So `Job C` should insert a value in table after both `Job A` and `Job B` have successfully run.
 
 📸 **Screenshot:**  
 ![Final Job States](outputs/test_exec_log.png)
