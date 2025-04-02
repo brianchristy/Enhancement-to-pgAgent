@@ -122,7 +122,7 @@ export default class PgaJobSchema extends BaseUISchema {
         columns: ['jscname', 'jscenabled', 'jscstart', 'jscend'],
       },{
         id: 'jdependencies', label: '', group: gettext('Dependencies'),
-        type: 'collection', mode: ['edit', 'create'],
+        type: 'collection', mode: ['edit', 'create', 'properties'],
         schema: new PgaJobDependencySchema({
           jobs: this.fieldOptions.jobs,
         }),
