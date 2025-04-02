@@ -128,6 +128,7 @@ export default class PgaJobSchema extends BaseUISchema {
         }),
         canAdd: true, canDelete: true, canEdit: true,
         columns: ['dependent_jobname'],
+        uniqueCol: ['dependent_jobid']
       }
     ];
   }
