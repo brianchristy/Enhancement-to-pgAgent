@@ -288,6 +288,10 @@ SELECT EXISTS(
         if not status:
             return internal_server_error(errormsg=res)
 
+        # Set original_dependent_jobid to track changes
+        for dep in res['rows']:
+            dep['original_dependent_jobid'] = dep['dependent_jobid']
+
         row['jdependencies'] = res['rows']
 
         return ajax_response(

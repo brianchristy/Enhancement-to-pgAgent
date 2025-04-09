@@ -8,4 +8,4 @@ FROM
 {% if jid %}
 WHERE jd.jobid = {{ jid|qtLiteral(conn) }}::integer
 {% endif %}
-ORDER BY j.jobname; 
+ORDER BY j.jobname;

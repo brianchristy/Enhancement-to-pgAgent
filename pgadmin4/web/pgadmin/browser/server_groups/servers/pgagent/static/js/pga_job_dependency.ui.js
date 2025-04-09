@@ -15,6 +15,7 @@ export default class PgaJobDependencySchema extends BaseUISchema {
     super({
       dependent_jobid: undefined,
       dependent_jobname: '',
+      original_dependent_jobid: undefined,
       ...initValues,
     });
 
@@ -27,11 +28,18 @@ export default class PgaJobDependencySchema extends BaseUISchema {
   get baseFields() {
     return [
       {
+        id: 'original_dependent_jobid',
+        label: gettext('Original Dependent Job ID'),
+        type: 'text',
+        mode: ['edit'],
+        visible: false,
+      },
+      {
         id: 'dependent_jobid', label: gettext('Dependent Job'), type: 'select',
         options: this.fieldOptions.jobs,
         controlProps: {allowClear: false},
         noEmpty: true,
-        readonly: false,
+        mode: ['create', 'edit'],
         helpMessage: gettext('Select the job that must complete before this job can run.'),
         helpMessageMode: ['edit', 'create'],
       },
