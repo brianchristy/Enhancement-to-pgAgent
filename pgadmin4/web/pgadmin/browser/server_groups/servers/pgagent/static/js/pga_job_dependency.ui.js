@@ -31,22 +31,22 @@ export default class PgaJobDependencySchema extends BaseUISchema {
         id: 'original_dependent_jobid',
         label: gettext('Original Dependent Job ID'),
         type: 'text',
-        mode: ['edit'],
         visible: false,
       },
       {
-        id: 'dependent_jobid', label: gettext('Dependent Job'), type: 'select',
+        id: 'dependent_jobid', label: gettext('Dependent Job'), 
+        type: 'select', cell: 'select',
         options: this.fieldOptions.jobs,
         controlProps: {allowClear: false},
         noEmpty: true,
-        mode: ['create', 'edit'],
+        mode: ['create', 'edit', 'properties'],
         helpMessage: gettext('Select the job that must complete before this job can run.'),
-        helpMessageMode: ['edit', 'create'],
+        helpMessageMode: ['create', 'edit', 'properties'],
       },
       {
         id: 'dependent_jobname', label: gettext('Dependent Job Name'), type: 'text',
-        mode: ['properties'],
         readonly: true,
+        visible: false,
       }
     ];
   }
