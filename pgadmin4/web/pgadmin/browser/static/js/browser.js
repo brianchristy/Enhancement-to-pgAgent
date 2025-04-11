@@ -21,7 +21,7 @@ define('pgadmin.browser', [
   'sources/csrf', 'pgadmin.authenticate.kerberos',
   'pgadmin.browser.utils', 'pgadmin.browser.messages',
   'pgadmin.browser.node', 'pgadmin.browser.collection', 'pgadmin.browser.activity',
-  'pgadmin.browser.keyboard', 'sources/tree/pgadmin_tree_save_state',
+  'pgadmin.browser.keyboard', 'sources/tree/pgadmin_tree_save_state'
 ], function(
   gettext, url_for, pgAdmin, csrfToken, Kerberos,
 ) {
