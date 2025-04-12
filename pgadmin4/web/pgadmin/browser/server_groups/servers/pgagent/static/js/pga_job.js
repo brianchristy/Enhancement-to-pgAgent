@@ -168,7 +168,7 @@ define('pgadmin.node.pga_job', [
           
           // Add WHERE clause if operation is specified
           if (operation) {
-            query += " WHERE operation_type = '" + operation + "'";
+            query += 'WHERE operation_type = ' +'\''+operation + '\'';
           }
           
           // Add ORDER BY clause
