@@ -151,7 +151,8 @@ class JobView(PGChildNodeView):
         'classes': [{}, {'get': 'job_classes'}],
         'jobs': [{'get': 'jobs'}, {'get': 'jobs'}],
         'children': [{'get': 'children'}],
-        'stats': [{'get': 'statistics'}]
+        'stats': [{'get': 'statistics'}],
+        'audit_log': [{'get': 'audit_log'}]
     })
 
     def check_precondition(f):
@@ -254,7 +255,7 @@ SELECT EXISTS(
         row = res['rows'][0]
 
         # Get job steps
-        status, res = self.conn.execute_dict(
+        status, rset = self.conn.execute_dict(
             render_template(
                 "/".join([self.template_path, 'steps.sql']),
                 jid=jid, conn=self.conn,
@@ -262,37 +263,80 @@ SELECT EXISTS(
             )
         )
         if not status:
-            return internal_server_error(errormsg=res)
+            return internal_server_error(errormsg=rset)
 
-        row['jsteps'] = res['rows']
+        row['jsteps'] = rset['rows']
 
         # Get job schedules
-        status, res = self.conn.execute_dict(
+        status, rset = self.conn.execute_dict(
             render_template(
                 "/".join([self.template_path, 'schedules.sql']),
                 jid=jid, conn=self.conn
             )
         )
         if not status:
-            return internal_server_error(errormsg=res)
+            return internal_server_error(errormsg=rset)
 
-        row['jschedules'] = res['rows']
+        # Create jscexceptions in the correct format that React control required
+        for schedule in rset['rows']:
+            if 'jexid' in schedule and schedule['jexid'] is not None \
+                    and len(schedule['jexid']) > 0:
+                schedule['jscexceptions'] = []
+                index = 0
+                for exid in schedule['jexid']:
+                    schedule['jscexceptions'].append(
+                        {'jexid': exid,
+                         'jexdate': schedule['jexdate'][index],
+                         'jextime': schedule['jextime'][index]
+                         }
+                    )
+                    index += 1
+
+        row['jschedules'] = rset['rows']
 
         # Get job dependencies
-        status, res = self.conn.execute_dict(
+        status, rset = self.conn.execute_dict(
             render_template(
                 "/".join([self.template_path, 'dependencies.sql']),
                 jid=jid, conn=self.conn
             )
         )
         if not status:
-            return internal_server_error(errormsg=res)
+            return internal_server_error(errormsg=rset)
 
         # Set original_dependent_jobid to track changes
-        for dep in res['rows']:
+        for dep in rset['rows']:
             dep['original_dependent_jobid'] = dep['dependent_jobid']
 
-        row['jdependencies'] = res['rows']
+        row['jdependencies'] = rset['rows']
+        
+        # Get audit logs for the job
+        status, rset = self.conn.execute_dict(
+            render_template(
+                "/".join([self.template_path, 'audit_log.sql']),
+                jid=jid, conn=self.conn
+            )
+        )
+        if not status:
+            return internal_server_error(errormsg=rset)
+            
+        # Process JSON fields to ensure they're properly formatted
+        for audit_row in rset['rows']:
+            if 'old_values' in audit_row and audit_row['old_values']:
+                if isinstance(audit_row['old_values'], str):
+                    try:
+                        audit_row['old_values'] = json.loads(audit_row['old_values'])
+                    except ValueError:
+                        pass
+                        
+            if 'new_values' in audit_row and audit_row['new_values']:
+                if isinstance(audit_row['new_values'], str):
+                    try:
+                        audit_row['new_values'] = json.loads(audit_row['new_values'])
+                    except ValueError:
+                        pass
+                        
+        row['audit_logs'] = rset['rows']
 
         return ajax_response(
             response=row,
@@ -336,12 +380,14 @@ SELECT EXISTS(
             self.conn.execute_void('END')
             return internal_server_error(errormsg=res)
 
+        job_id = res
+            
         # Insert dependencies if any
         if 'jdependencies' in data and len(data['jdependencies']) > 0:
             status, res = self.conn.execute_void(
                 render_template(
                     "/".join([self.template_path, 'create_dependencies.sql']),
-                    data=data, conn=self.conn, jid=res
+                    data=data, conn=self.conn, jid=job_id
                 )
             )
             if not status:
@@ -352,7 +398,7 @@ SELECT EXISTS(
         status, res = self.conn.execute_dict(
             render_template(
                 "/".join([self.template_path, self._NODES_SQL]),
-                jid=res, conn=self.conn
+                jid=job_id, conn=self.conn
             )
         )
 
@@ -578,6 +624,18 @@ SELECT EXISTS(
             del schedule['jexdate']
             del schedule['jextime']
 
+        # Get dependencies for SQL generation
+        status, res = self.conn.execute_dict(
+            render_template(
+                "/".join([self.template_path, 'dependencies.sql']),
+                jid=jid, conn=self.conn
+            )
+        )
+        if not status:
+            return internal_server_error(errormsg=res)
+
+        row['jdependencies'] = res['rows']
+
         return ajax_response(
             response=render_template(
                 "/".join([self.template_path, self._CREATE_SQL]),
@@ -640,6 +698,96 @@ SELECT EXISTS(
 
         return make_json_response(
             data=res['rows'],
+            status=200
+        )
+
+    @check_precondition
+    def audit_log(self, gid, sid, jid):
+        """
+        Returns the audit log entries for the specified job.
+        """
+        # First check if the audit log table exists
+        check_sql = """
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'pgagent' 
+            AND table_name = 'pga_job_audit_log'
+        ) as table_exists;
+        """
+        status, check_res = self.conn.execute_dict(check_sql)
+        
+        if not status:
+            return internal_server_error(errormsg=check_res)
+            
+        if len(check_res['rows']) == 0 or not check_res['rows'][0]['table_exists']:
+            # Table doesn't exist, return empty result
+            return ajax_response(
+                response={'rows': [], 'msg': 'Audit log table does not exist. Please upgrade pgAgent to version 4.3 or later.'},
+                status=200
+            )
+        
+        # Get row threshold preference
+        pref = Preferences.module('browser')
+        rows_threshold = pref.preference(
+            'pgagent_row_threshold'
+        )
+        
+        # Get filter parameters from request
+        operation_types = request.args.get('operation_types', None)
+        date_from = request.args.get('date_from', None)
+        date_to = request.args.get('date_to', None)
+        
+        # Get sorting parameters
+        sort_column = request.args.get('sort', 'operation_time')
+        sort_order = request.args.get('sort_order', 'desc')
+        
+        # Format operation types for SQL query if provided
+        operation_types_sql = None
+        if operation_types:
+            op_types = operation_types.split(',')
+            # Format as SQL string list: 'CREATE', 'MODIFY', etc.
+            operation_types_sql = "'" + "', '".join(op_types) + "'"
+
+        # Table exists, proceed with query
+        status, res = self.conn.execute_dict(
+            render_template(
+                "/".join([self.template_path, 'audit_log.sql']),
+                jid=jid,
+                conn=self.conn,
+                operation_types=operation_types_sql,
+                date_from=date_from,
+                date_to=date_to,
+                sort_column=sort_column,
+                sort_order=sort_order,
+                rows_threshold=rows_threshold.get()
+            )
+        )
+
+        if not status:
+            return internal_server_error(errormsg=res)
+        
+        # Debug: Log the number of rows returned and filter parameters
+        filter_info = f"Filters: operation_types={operation_types}, date_from={date_from}, date_to={date_to}"
+        print(f"Audit log query for job {jid} returned {len(res['rows'])} rows. {filter_info}")
+            
+        # Process JSON fields to ensure they're properly formatted
+        for row in res['rows']:
+            if 'old_values' in row and row['old_values']:
+                if isinstance(row['old_values'], str):
+                    try:
+                        row['old_values'] = json.loads(row['old_values'])
+                    except ValueError:
+                        pass
+                        
+            if 'new_values' in row and row['new_values']:
+                if isinstance(row['new_values'], str):
+                    try:
+                        row['new_values'] = json.loads(row['new_values'])
+                    except ValueError:
+                        pass
+
+        return ajax_response(
+            response=res,
             status=200
         )
 
