@@ -22,6 +22,41 @@ Previously, pgAgent lacked an in-depth audit mechanism, making it difficult to t
 | `pgagent.sql`               | Schema Changes                           | Created `pga_job_audit_log` table                       |
 | `job.cpp`                   | Execution Logging                        | Added function to log job execution details             |
 | `pgagent--4.2--4.3.sql`     | Schema Changes specific to audit logging | Created `pga_job_audit_log` table, function  & triggers |
+| `pga_job.js`                | UI Changes to add the audit log and the filtered audit log in job context menu and query tool implementation with copy to clipboard feature |Added job audit log and job audit log(operation) to context menu which when clicked opens the query tool with the respective query copied onto the user's clipboard |
+| `__init__.py`     |Added Audit Log tab in the Job Properties | Created Audit Log tab in Job Properties |
+| `pga_job.ui.js`     |UI changes for the audit log tab in job properties | Created the UI for audit log tab in Job Properties |
+| `pga_audit_log.macros`     | For SQL fetching from the pgagent Schema | Added macros for fetching data from table in pgagent schema |
+| `audit_logs.sql`     | For implementing the macro in order to fetch the data from the table | Fetched audit logs from the pgagent audit log table in the pgagent schema|
+
+---
+
+## 🖥️ UI Modifications
+
+### 📌 Audit Logging Interface for a particular job
+- Added a new **Audit Log** tab in job properties
+- This section shows all the logs related to that particular job
+
+### 📌 Audit Logging Interface for all jobs with filtering
+- Added new menus **Job Audit Log(All)**,**Job Audit Log(Create)**,**Job Audit Log(Delete)**,**Job Audit Log(Execute)**,**Job Audit Log(Delete)**  in PgAgent Jobs COntext Menu.
+- When any of these options are selected, it opens up the query tool with the particular query for that operation copied onto the user's clipboard. 
+
+
+
+### 📌 Features
+1. **Audit Logging Tab**
+   - Accessible in job properties view
+   - Shows list of current audit logs for that particular job including creation, all modifications and executions. 
+
+2. **Audit Log Context Menu**
+   - Dropdown list of all job audit logs with option for filtering according to the operation type.
+   - This when clicked opens up the query tool with the query copied onto the user's clipboard
+   - The user only has to paste it onto the query tool(ctrl+v) and then execute it.
+     
+
+3. **User Experience**
+   - Intuitive interface similar to other tabs in PgAdmin.
+   - Clear visual feedback for all Logs related to the particular job.
+   - Easy to view all job audit logs , and also filter them according to the operation type and job.
 
 ---
 
