@@ -121,6 +121,50 @@ The Audit Logs for the selected job gets displayed in a table like format under 
 ![added_audit_log_for_job_c_in_properties](https://github.com/user-attachments/assets/fa901056-bad4-43d6-99d5-fa060eb829c8)
 
 
+## **9️⃣Verifying Audit Logs Tab in Dashboard
+Go to Dashboard and there select Audit Logs Tab. 
+
+✅ **Expected Output**:
+It should display all of the job audit logs along with options for filtering by operation type,job name,user,start date and end dates.
+
+📸 **Screenshot**:
+
+![Added Audit Logging UI Tab](https://github.com/user-attachments/assets/e2c44918-80d8-4d62-b35f-91da1ad2115e)
+
+
+## **🔟Verifying Filtering by Operation Type in Audit Logs Dashboard
+Go to Dashboard, select Audit Logs Tab and then in the filters section select any one operation type
+
+✅ **Expected Output**:
+It should display all of the job audit logs associated with that particular operation type.
+
+📸 **Screenshot**:
+
+![Filtering by Operation Type](https://github.com/user-attachments/assets/4e35a6bf-ddaa-4d3b-a7b1-a2bd8799b17d)
+
+## **🔟Verifying Filtering by Job Name in Audit Logs Dashboard
+Go to Dashboard, select Audit Logs Tab and then in the filters section select any one job name.
+
+✅ **Expected Output**:
+It should display all of the job audit logs associated with that particular job.
+
+📸 **Screenshot**:
+
+![Filtering by Job Name](https://github.com/user-attachments/assets/01870156-bf56-463c-81b8-68594dffd083)
+
+
+## **🔟Verifying Filtering by Start Dates and End Dates in Audit Logs Dashboard
+
+Go to Dashboard, select Audit Logs Tab and then in the filters section select the start date and end dates.
+
+
+✅ **Expected Output**:
+It should display all of the job audit logs within that particular date and time range.
+
+📸 **Screenshot**:
+
+![Filtering by Start and End Date](https://github.com/user-attachments/assets/dbd63df9-888e-403f-8cdf-2a11226625d2)
+
 
 ## **🎯 Conclusion:
 The Audit Logging feature is working as expected, accurately logging job actions such as creation, modification, deletion, and execution.
