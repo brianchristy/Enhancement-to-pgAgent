@@ -29,6 +29,7 @@ import Summary from './SystemStats/Summary';
 import CpuDetails from './SystemStats/CpuDetails';
 import Memory from './SystemStats/Memory';
 import Storage from './SystemStats/Storage';
+import AuditLog from './AuditLog';
 import withStandardTabInfo from '../../../static/js/helpers/withStandardTabInfo';
 import { BROWSER_PANELS } from '../../../browser/static/js/constants';
 import { usePgAdmin } from '../../../static/js/PgAdminProvider';
@@ -320,6 +321,7 @@ function Dashboard({
   if(treeNodeInfo?.server?.replication_type) {
     mainTabs.push(gettext('Replication'));
   }
+  mainTabs.push(gettext('Job Monitor'), gettext('Audit Logs'));
   let systemStatsTabs = [gettext('Summary'), gettext('CPU'), gettext('Memory'), gettext('Storage')];
 
   const mainTabChanged = (e, tabVal) => {
@@ -1198,6 +1200,12 @@ function Dashboard({
               <TabPanel value={mainTabVal} index={5} classNameRoot='Dashboard-tabPanel'>
                 <Replication key={sid} sid={sid} node={node}
                   preferences={preferences} treeNodeInfo={treeNodeInfo} nodeData={nodeData} pageVisible={props.isActive} />
+              </TabPanel>
+              
+              
+              {/* Audit Logs */}
+              <TabPanel value={mainTabVal} index={mainTabs.indexOf(gettext('Audit Logs'))} classNameRoot='Dashboard-tabPanel'>
+                <AuditLog key={sid} sid={sid} treeNodeInfo={treeNodeInfo} pageVisible={props.isActive} />
               </TabPanel>
             </Box>
           </Box>
