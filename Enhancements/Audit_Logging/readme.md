@@ -19,14 +19,19 @@ Previously, pgAgent lacked an in-depth audit mechanism, making it difficult to t
 
 | File                        | Description                              | Changes Implemented                                     |
 | -------------               | -----------------                        | --------------------------------------------            |
-| `pgagent.sql`               | Schema Changes                           | Created `pga_job_audit_log` table                       |
-| `job.cpp`                   | Execution Logging                        | Added function to log job execution details             |
-| `pgagent--4.2--4.3.sql`     | Schema Changes specific to audit logging | Created `pga_job_audit_log` table, function  & triggers |
-| `pga_job.js`                | UI Changes to add the audit log and the filtered audit log in job context menu and query tool implementation with copy to clipboard feature |Added job audit log and job audit log(operation) to context menu which when clicked opens the query tool with the respective query copied onto the user's clipboard |
-| `__init__.py`     |Added Audit Log tab in the Job Properties | Created Audit Log tab in Job Properties |
-| `pga_job.ui.js`     |UI changes for the audit log tab in job properties | Created the UI for audit log tab in Job Properties |
-| `pga_audit_log.macros`     | For SQL fetching from the pgagent Schema | Added macros for fetching data from table in pgagent schema |
-| `audit_logs.sql`     | For implementing the macro in order to fetch the data from the table | Fetched audit logs from the pgagent audit log table in the pgagent schema|
+| [`pgagent.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/sql/pgagent.sql#L123)               | Schema Changes                           | Created `pga_job_audit_log` table                       |
+| [`job.cpp`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/job.cpp#L38)                   | Execution Logging                        | Added function to log job execution details             |
+| [`pgagent--4.2--4.3.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgagent/sql/pgagent--4.2--4.3.sql#L1)     | Schema Changes specific to audit logging | Created `pga_job_audit_log` table, function  & triggers |
+| [`pga_job.js`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/static/js/pga_job.js)                | UI Changes to add the audit log and the filtered audit log in job context menu and query tool implementation with copy to clipboard feature |Added job audit log and job audit log(operation) to context menu which when clicked opens the query tool with the respective query copied onto the user's clipboard |
+| [`__init__.py`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/__init__.py)     |Added Audit Log tab in the Job Properties | Created Audit Log tab in Job Properties |
+| [`pga_job.ui.js`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/static/js/pga_job.ui.js)     |UI changes for the audit log tab in job properties | Created the UI for audit log tab in Job Properties |
+| [`pga_audit_log.macros`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/templates/macros/pga_audit_log.macros)     | For SQL fetching from the pgagent Schema | Added macros for fetching data from table in pgagent schema |
+| [`audit_logs.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/browser/server_groups/servers/pgagent/templates/pga_job/sql/pre3.4/audit_log.sql)     | For implementing the macro in order to fetch the data from the table | Fetched audit logs from the pgagent audit log table in the pgagent schema| 
+| [`__init__.py`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/dashboard/__init__.py#L255)     | For initializing the audit logs tab in dashboard | Added Audit Logs tab to dashbaoard and implemented the fetching logic|
+| [`AuditLog.jsx`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/dashboard/static/js/AuditLog.jsx)     | For implementing the ui for the audit logs tab in dashboard | Implemented the UI for the audit logs tab in the dashboard|
+| [`Dashboard.jsx`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/dashboard/static/js/Dashboard.jsx)     | For adding the pgagent tab in the dashboard   | Added audit log to the dashboard|
+| [`audit_logs.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/dashboard/templates/dashboard/sql/default/audit_logs.sql)     | For fetching the audit logs from the table into the dashboard   | Added sql for fetching the job audit logs |
+| [`job_names.sql`](https://github.com/brianchristy/Enhancement-to-pgAgent/blob/main/pgadmin4/web/pgadmin/dashboard/templates/dashboard/sql/default/job_names.sql)     | For fetching the job name in case of filtering by job name   | Added job name in the filtering by job  |
 
 ---
 
