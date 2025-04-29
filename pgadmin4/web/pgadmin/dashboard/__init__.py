@@ -831,7 +831,7 @@ def audit_logs(sid=None):
         'end_date': end_date
     }
     
-    sql = render_template("/".join(['dashboard/sql', 'audit_logs.sql']), **params)
+    sql = render_template("/".join(['dashboard/sql/default', 'audit_logs.sql']), **params)
     status, res = g.conn.execute_dict(sql)
     
     if not status:
@@ -857,7 +857,7 @@ def job_names(sid=None):
     if not sid:
         return internal_server_error(errormsg=ERROR_SERVER_ID_NOT_SPECIFIED)
     
-    sql = render_template("/".join(['dashboard/sql', 'job_names.sql']))
+    sql = render_template("/".join(['dashboard/sql/default', 'job_names.sql']))
     status, res = g.conn.execute_dict(sql)
     
     if not status:
