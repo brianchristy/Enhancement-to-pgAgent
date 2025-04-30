@@ -236,7 +236,22 @@ SELECT EXISTS(
         )
 
     @check_precondition
-    def properties(self, gid, sid, jid):
+    def properties(self, gid, sid, jid=None):
+        if jid is None:
+            # Get all jobs
+            SQL = render_template(
+                "/".join([self.template_path, self._NODES_SQL]),
+                conn=self.conn
+            )
+            status, rset = self.conn.execute_dict(SQL)
+            
+            if not status:
+                return internal_server_error(errormsg=rset)
+                
+            return ajax_response(
+                response=rset['rows'],
+                status=200
+            )
         """Get the job properties."""
         status, res = self.conn.execute_dict(
             render_template(
