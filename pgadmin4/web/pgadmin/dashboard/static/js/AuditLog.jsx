@@ -28,6 +28,8 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import EventIcon from '@mui/icons-material/Event';
 import EmptyPanelMessage from '../../../static/js/components/EmptyPanelMessage';
+import GetAppRoundedIcon from '@mui/icons-material/GetAppRounded';
+import { downloadFile } from '../../../static/js/utils';
 
 // Define styles as objects instead of using makeStyles
 const styles = {
@@ -461,6 +463,96 @@ function AuditLog({ sid, treeNodeInfo, pageVisible }) {
     setEndDate('');
   };
 
+  const handleExport = (format) => {
+    if (!sid) return;
+    
+    // Build query parameters for filtering
+    let params = new URLSearchParams();
+    if (operation) params.append('operation', operation);
+    if (username) params.append('username', username);
+    
+    // We're already storing the job ID in jobname
+    if (jobname) {
+      params.append('jobname', jobname);
+    }
+    
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+    
+    // Show loading state
+    setLoading(true);
+    
+    // Use the API instance to make the request with proper authentication
+    api({
+      url: url_for('dashboard.audit_logs', {'sid': sid}) + '?' + params.toString(),
+      method: 'GET',
+    })
+      .then((response) => {
+        const data = response.data;
+        let fileName = `pgagent_audit_logs_${new Date().getTime()}`;
+        let contentType = 'text/plain';
+        let content = '';
+        
+        if (format === 'json') {
+          fileName += '.json';
+          contentType = 'application/json';
+          content = JSON.stringify(data, null, 2);
+        } else if (format === 'csv') {
+          fileName += '.csv';
+          contentType = 'text/csv';
+          
+          // Create CSV content
+          if (data && data.length > 0) {
+            // Get headers from the first row
+            const headers = Object.keys(data[0]);
+            content = headers.join(',') + '\n';
+            
+            // Add data rows
+            data.forEach(row => {
+              const rowValues = headers.map(header => {
+                let value = row[header];
+                // Handle special cases for CSV formatting
+                if (value === null || value === undefined) {
+                  return '';
+                } else if (typeof value === 'object') {
+                  value = JSON.stringify(value);
+                }
+                // Escape quotes and wrap in quotes if contains comma
+                value = String(value).replace(/"/g, '""');
+                if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+                  value = `"${value}"`;
+                }
+                return value;
+              });
+              content += rowValues.join(',') + '\n';
+            });
+          }
+        }
+        
+        // Download the file
+        downloadFile(content, fileName, contentType);
+        setLoading(false);
+        
+        // Show success notification
+        if (window.pgAdmin && window.pgAdmin.Browser) {
+          window.pgAdmin.Browser.notifier.success(
+            gettext(`Successfully exported audit logs in ${format.toUpperCase()} format`)
+          );
+        }
+      })
+      .catch((error) => {
+        console.error('Export failed:', error);
+        setLoading(false);
+        
+        // Show error notification
+        if (window.pgAdmin && window.pgAdmin.Browser) {
+          window.pgAdmin.Browser.notifier.error(
+            gettext(`Failed to export audit logs: ${error.message}`)
+          );
+        }
+      });
+  };
+
   const columns = [
     {
       accessorKey: 'audit_id',
@@ -734,6 +826,43 @@ function AuditLog({ sid, treeNodeInfo, pageVisible }) {
             size="medium"
           >
             {gettext('Reset')}
+          </Button>
+          <Button 
+            variant="outlined" 
+            onClick={() => handleExport('json')} 
+            startIcon={<GetAppRoundedIcon />}
+            sx={{
+              ...styles.filterButton,
+              marginLeft: '8px',
+              borderColor: '#4caf50',
+              color: '#4caf50',
+              '&:hover': {
+                borderColor: '#388e3c',
+                backgroundColor: 'rgba(76, 175, 80, 0.04)',
+              }
+            }}
+            size="medium"
+            disabled={loading}
+          >
+            {gettext('Export JSON')}
+          </Button>
+          <Button 
+            variant="outlined" 
+            onClick={() => handleExport('csv')} 
+            startIcon={<GetAppRoundedIcon />}
+            sx={{
+              ...styles.filterButton,
+              borderColor: '#ff9800',
+              color: '#ff9800',
+              '&:hover': {
+                borderColor: '#f57c00',
+                backgroundColor: 'rgba(255, 152, 0, 0.04)',
+              }
+            }}
+            size="medium"
+            disabled={loading}
+          >
+            {gettext('Export CSV')}
           </Button>
         </Box>
       </Paper>
